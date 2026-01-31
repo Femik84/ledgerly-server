@@ -91,25 +91,42 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # DATABASE (Environment-aware)
 # -----------------------------
 DATABASE_URL = os.getenv("DATABASE_URL")
-
-if DEBUG:
-    # Local development (direct connection)
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            ssl_require=True
-        )
-    }
-else:
-    # Production (Render + Supabase pooler)
-    DATABASES = {
+DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=0,   # MUST be 0 for pgbouncer
             ssl_require=True
         )
     }
+
+
+
+
+# # -----------------------------
+# # DATABASE (Environment-aware)
+# # -----------------------------
+# DATABASE_URL = os.getenv("DATABASE_URL")
+
+# if DEBUG:
+#     # Local development (direct connection)
+#     DATABASES = {
+#         'default': dj_database_url.config(
+#             default=DATABASE_URL,
+#             conn_max_age=600,
+#             ssl_require=True
+#         )
+#     }
+# else:
+#     # Production (Render + Supabase pooler)
+#     DATABASES = {
+#         'default': dj_database_url.config(
+#             default=DATABASE_URL,
+#             conn_max_age=0,   # MUST be 0 for pgbouncer
+#             ssl_require=True
+#         )
+#     }
+
+
 
 
 # -----------------------------
