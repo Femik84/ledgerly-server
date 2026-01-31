@@ -9,13 +9,16 @@ from dotenv import load_dotenv
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import dj_database_url
 
 # Load .env
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep secret key in .env
+# -----------------------------
+# SECURITY
+# -----------------------------
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG") == "True"
 ALLOWED_HOSTS = ["*"]
@@ -48,7 +51,7 @@ INSTALLED_APPS = [
 ]
 
 # -----------------------------
-# Middleware
+# MIDDLEWARE
 # -----------------------------
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -65,7 +68,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'backend.urls'
 
 # -----------------------------
-# Templates
+# TEMPLATES
 # -----------------------------
 TEMPLATES = [
     {
@@ -85,17 +88,32 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # -----------------------------
-# DATABASE (SQLite)
+# DATABASE (Environment-aware)
 # -----------------------------
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / "db.sqlite3",
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DEBUG:
+    # Local development (direct connection)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True
+        )
     }
-}
+else:
+    # Production (Render + Supabase pooler)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=0,   # MUST be 0 for pgbouncer
+            ssl_require=True
+        )
+    }
+
 
 # -----------------------------
-# Auth Validators
+# AUTH PASSWORD VALIDATORS
 # -----------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -105,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # -----------------------------
-# Internationalization
+# INTERNATIONALIZATION
 # -----------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -113,7 +131,7 @@ USE_I18N = True
 USE_TZ = True
 
 # -----------------------------
-# Static & Media (Cloudinary)
+# STATIC & MEDIA (Cloudinary)
 # -----------------------------
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -138,7 +156,7 @@ cloudinary.config(
 )
 
 # -----------------------------
-# Django Defaults
+# DJANGO DEFAULTS
 # -----------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.CustomUser'
