@@ -33,6 +33,7 @@ urlpatterns = [
     path("api/", include("transactions.urls")),
     path("api/", include("budgets.urls")),      # budgets app
     path("api/notifications/", include("notifications.urls")),
+    path("api/health/", include("core.urls")),
 
 
     # JWT Auth endpoints

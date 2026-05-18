@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'transactions',
     'budgets',
     'notifications',
+    'core',
 ]
 
 # -----------------------------
